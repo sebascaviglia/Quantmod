@@ -1,0 +1,86 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+# Lo primero es instalar paquetes 
+
+#install.packages('TTR') 
+
+#install.packages("tidyquant") 
+
+# Con los paquetes instalados debemos cargarlos 
+
+library(tidyquant)  
+
+library(TTR) 
+
+# Con la función tq_get cargamos los datos de la acción de Apple en AAPL 
+
+AAPL <- tq_get("AAPL", get="stock.prices", from= "2018-01-01", to= "2021-04-21") 
+
+# Para trabajar los datos debemos convertirlos en un Dataframe.  
+
+AAPL <- data.frame(AAPL) 
+
+# Verificamos los datos 
+
+head(AAPL)
+
+head(AAPL)
+
+names(AAPL) 
+
+str(AAPL) 
+
+#Con el Dataframe de precios ya se pueden hacer los cálculos necesarios para crear el dataset con algunos indicadores.  
+
+# La función SMA calcula el promedio móvil simple.  Lo calcularemos un promedio de 20 y 40 periodos con base en el cierre.  
+
+sma20 <- SMA(AAPL[c('close')], n=20) 
+
+head(sma20, n=50) 
+
+# Calcular el promedio movil de 40 periodos, n= número de periodos. 
+
+sma40 <- SMA(AAPL$close, n=40) 
+
+head(sma40, n=50) 
+
+# Para calcular las bandas de bollinger se pueden especificar parámetros como los periodos de la media y el número de desviaciones estándar.  
+
+bb20 = BBands(AAPL$close, sd=2.0) 
+
+head(bb20 , n=50) 
+
+# Para calcular el RSI se deben definir el periodo para el cálculo de alzas y bajas.  
+
+rsi14 = RSI(AAPL$close, n = 14) 
+
+head(rsi14, n = 30) 
+
+# En el caso del MACD se tiene más parámetros.  
+
+macd <- MACD(AAPL$close, nFast=12, nSlow=26, nSig=9, maType=EMA) 
+
+head(macd, n=30) 
+
+# Con estos cálculos podemos unir todos los datos en un solo dataframe. 
+
+Estudio = data.frame(AAPL, sma20, sma40, bb20 ,rsi14, macd) 
+
+head(Estudio, n=30) 
+
+str(Estudio) 
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
